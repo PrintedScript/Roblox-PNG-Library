@@ -13,7 +13,7 @@ PNG.__index = PNG
 
 function GetScript(path)
 	local request = syn and syn.request or http_request
-	return request({Url = "https://raw.githubusercontent.com/PrintedScript/Roblox-PNG-Library/master/"..path})
+	return request({Url = "https://raw.githubusercontent.com/PrintedScript/Roblox-PNG-Library/master/"..path}).Body
 end
 
 local Deflate = loadstring(GetScript("Modules/Deflate.lua"))()--require(modules.Deflate)
