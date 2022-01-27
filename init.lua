@@ -11,9 +11,6 @@
 local PNG = {}
 PNG.__index = PNG
 
-local chunks = script.Chunks
-local modules = script.Modules
-
 function GetScript(path)
 	local request = syn and syn.request or http_request
 	return request({Url = "https://raw.githubusercontent.com/PrintedScript/Roblox-PNG-Library/master/"..path})
@@ -150,12 +147,8 @@ function PNG.new(buffer)
 			CRC = crc;
 		}
 		
-		local handler = chunks:FindFirstChild(chunkType)
-		
-		if handler then
-			handler = require(handler)
-			handler(file, chunk)
-		end
+		local handler = loadstring(GetScript("Chunks/"..chunkType..".lua"))() --require(handler)
+		handler(file, chunk)
 		
 		table.insert(file.Chunks, chunk)
 	end
