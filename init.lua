@@ -14,9 +14,14 @@ PNG.__index = PNG
 local chunks = script.Chunks
 local modules = script.Modules
 
-local Deflate = require(modules.Deflate)
-local Unfilter = require(modules.Unfilter)
-local BinaryReader = require(modules.BinaryReader)
+function GetScript(path)
+	local request = syn and syn.request or http_request
+	return request({Url = "https://raw.githubusercontent.com/PrintedScript/Roblox-PNG-Library/master/"..path})
+end
+
+local Deflate = loadstring(GetScript("Modules/Deflate.lua"))()--require(modules.Deflate)
+local Unfilter = loadstring(GetScript("Modules/Unfilter.lua"))()--require(modules.Unfilter)
+local BinaryReader loadstring(GetScript("Modules/BinaryReader.lua"))()--require(modules.BinaryReader)
 
 local function getBytesPerPixel(colorType)
 	if colorType == 0 or colorType == 3 then
