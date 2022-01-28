@@ -13,12 +13,12 @@ PNG.__index = PNG
 
 function GetScript(path)
 	local request = syn and syn.request or http_request
-	return request({Url = "https://raw.githubusercontent.com/PrintedScript/Roblox-PNG-Library/master/"..path}).Body
+	return request({Url = path}).Body
 end
 
-local Deflate = loadstring(GetScript("Modules/Deflate.lua"))()--require(modules.Deflate)
-local Unfilter = loadstring(GetScript("Modules/Unfilter.lua"))()--require(modules.Unfilter)
-local BinaryReader loadstring(GetScript("Modules/BinaryReader.lua"))()--require(modules.BinaryReader)
+local Deflate = loadstring(GetScript("https://raw.githubusercontent.com/PrintedScript/Roblox-PNG-Library/master/Modules/Deflate.lua"))()--require(modules.Deflate)
+local Unfilter = loadstring(GetScript("https://raw.githubusercontent.com/PrintedScript/Roblox-PNG-Library/master/Modules/Unfilter.lua"))()--require(modules.Unfilter)
+local BinaryReader loadstring(GetScript("https://raw.githubusercontent.com/PrintedScript/Roblox-PNG-Library/master/Modules/BinaryReader.lua"))()--require(modules.BinaryReader)
 
 local function getBytesPerPixel(colorType)
 	if colorType == 0 or colorType == 3 then
@@ -147,7 +147,7 @@ function PNG.new(buffer)
 			CRC = crc;
 		}
 		
-		local handler = loadstring(GetScript("Chunks/"..chunkType..".lua"))() --require(handler)
+		local handler = loadstring(GetScript("https://raw.githubusercontent.com/PrintedScript/Roblox-PNG-Library/master/Chunks/"..chunkType..".lua"))() --require(handler)
 		handler(file, chunk)
 		
 		table.insert(file.Chunks, chunk)
