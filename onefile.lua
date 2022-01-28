@@ -424,7 +424,7 @@ function Deflate:InflateZlib(io)
 	local bitStream = getBitStream(io.Input)
 	local windowSize = parseZlibHeader(bitStream)
 	
-	self:Inflate
+	Deflate:Inflate
 	{
 		Input = bitStream;
 		Output = io.Output;
@@ -465,7 +465,7 @@ function Unfilter:Up(scanline, pixels, bpp, row)
 			pixels[row][i] = bit32.band(x + b, 0xFF)
 		end
 	else
-		self:None(scanline, pixels, bpp, row)
+		Unfilter:None(scanline, pixels, bpp, row)
 	end
 end
 
@@ -536,7 +536,7 @@ function Unfilter:Paeth(scanline, pixels, bpp, row)
 			pixels[row][i] = bit32.band(x + pr, 0xFF)
 		end
 	else
-		self:Sub(scanline, pixels, bpp, row)
+		Unfilter:Sub(scanline, pixels, bpp, row)
 	end
 end
 
@@ -555,12 +555,12 @@ function BinaryReader.new(buffer)
 end
 
 function BinaryReader:ReadByte()
-	local buffer = self.Buffer
-	local pos = self.Position
+	local buffer = BinaryReader.Buffer
+	local pos = BinaryReader.Position
 	
-	if pos <= self.Length then
+	if pos <= BinaryReader.Length then
 		local result = buffer:sub(pos, pos)
-		self.Position = pos + 1
+		BinaryReader.Position = pos + 1
 		
 		return result:byte()
 	end
@@ -570,7 +570,7 @@ function BinaryReader:ReadBytes(count, asArray)
 	local values = {}
 	
 	for i = 1, count do
-		values[i] = self:ReadByte()
+		values[i] = BinaryReader:ReadByte()
 	end
 	
 	if asArray then
@@ -581,12 +581,12 @@ function BinaryReader:ReadBytes(count, asArray)
 end
 
 function BinaryReader:ReadAllBytes()
-	return self:ReadBytes(self.Length, true)
+	return BinaryReader:ReadBytes(BinaryReader.Length, true)
 end
 
 function BinaryReader:IterateBytes()
 	return function ()
-		return self:ReadByte()
+		return BinaryReader:ReadByte()
 	end
 end
 
@@ -599,43 +599,43 @@ function BinaryReader:TwosComplementOf(value, numBits)
 end
 
 function BinaryReader:ReadUInt16()
-	local upper, lower = self:ReadBytes(2)
+	local upper, lower = BinaryReader:ReadBytes(2)
 	return (upper * 256) + lower
 end
 
 function BinaryReader:ReadInt16()
-	local unsigned = self:ReadUInt16()
-	return self:TwosComplementOf(unsigned, 16)
+	local unsigned = BinaryReader:ReadUInt16()
+	return BinaryReader:TwosComplementOf(unsigned, 16)
 end
 
 function BinaryReader:ReadUInt32()
-	local upper = self:ReadUInt16()
-	local lower = self:ReadUInt16()
+	local upper = BinaryReader:ReadUInt16()
+	local lower = BinaryReader:ReadUInt16()
 	
 	return (upper * 65536) + lower
 end
 
 function BinaryReader:ReadInt32()
-	local unsigned = self:ReadUInt32()
-	return self:TwosComplementOf(unsigned, 32)
+	local unsigned = BinaryReader:ReadUInt32()
+	return BinaryReader:TwosComplementOf(unsigned, 32)
 end
 
 function BinaryReader:ReadString(length)
     if length == nil then
-        length = self:ReadByte()
+        length = BinaryReader:ReadByte()
     end
     
-    local pos = self.Position
-    local nextPos = math.min(self.Length, pos + length)
+    local pos = BinaryReader.Position
+    local nextPos = math.min(BinaryReader.Length, pos + length)
     
-    local result = self.Buffer:sub(pos, nextPos - 1)
-    self.Position = nextPos
+    local result = BinaryReader.Buffer:sub(pos, nextPos - 1)
+    BinaryReader.Position = nextPos
     
     return result
 end
 
 function BinaryReader:ForkReader(length)
-	local chunk = self:ReadString(length)
+	local chunk = BinaryReader:ReadString(length)
 	return BinaryReader.new(chunk)
 end
 
@@ -848,8 +848,8 @@ local Chunks = {
 }
 
 function PNG:GetPixel(x, y)
-	local row, i0, i1 = indexBitmap(self, x, y)
-	local colorType = self.ColorType
+	local row, i0, i1 = indexBitmap(PNG, x, y)
+	local colorType = PNG.ColorType
 	
 	local color, alpha do
 		if colorType == 0 then
@@ -861,8 +861,8 @@ function PNG:GetPixel(x, y)
 			color = Color3.fromRGB(r, g, b)
 			alpha = 255
 		elseif colorType == 3 then
-			local palette = self.Palette
-			local alphaData = self.AlphaData
+			local palette = PNG.Palette
+			local alphaData = PNG.AlphaData
 			
 			local index = unpack(row, i0, i1)
 			index = index + 1
